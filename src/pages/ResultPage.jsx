@@ -50,7 +50,7 @@ export default function ResultPage() {
                     결과 공유하기 ✨
                 </button>
                 <button className="btn-secondary" onClick={() => navigate('/')}>
-                    다시 테스트하기
+                    다시 테스트하기 🔄
                 </button>
             </div>
         </div>
