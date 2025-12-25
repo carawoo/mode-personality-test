@@ -134,6 +134,8 @@ export function getModeDiffInterpretation(diffs) {
         if (direction !== 'neutral') {
             text = copyBank.modeDiff[axis]?.[direction]?.[impact] ||
                 copyBank.modeDiff[axis]?.[direction]?.['low'] || '';
+        } else {
+            text = copyBank.modeDiff[axis]?.['neutral'] || '';
         }
 
         return {

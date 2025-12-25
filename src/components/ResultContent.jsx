@@ -210,10 +210,12 @@ export default function ResultContent({ results, cardRef, isCapture = false }) {
                         {modeDiffs.map((diff, i) => (
                             <li key={i} className="diff-item">
                                 <div className="diff-header">
-                                    <span className="diff-axis">{diff.axisName}</span>
-                                    <span className={`diff-badge ${diff.direction}`}>
-                                        {diff.level}
-                                    </span>
+                                    <div className="diff-title-group">
+                                        <span className="diff-axis">{diff.axisName}</span>
+                                        <span className={`diff-badge ${diff.direction}`}>
+                                            {diff.level}
+                                        </span>
+                                    </div>
                                 </div>
                                 <p className="diff-text">{diff.text}</p>
                             </li>
