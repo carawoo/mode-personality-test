@@ -38,7 +38,7 @@ export default function ResultContent({ results, cardRef, isCapture = false }) {
             <section className="result-section hero-section">
                 <div className="hero-top">
                     <span className="section-badge">
-                        {isOther ? `👤 ${displayName}의 모드 성향` : '나의 모드 성향'}
+                        {isOther ? `👤 ${displayName}의 모드 비교 결과` : '나의 모드 비교 결과'}
                     </span>
                     <h1 className="main-code">{code}</h1>
                     <p className="type-title">{typeProfile.title}</p>
@@ -55,7 +55,7 @@ export default function ResultContent({ results, cardRef, isCapture = false }) {
                 )}
 
                 <p className="section-note">
-                    💡 기본 테스트 24문항의 결과입니다. 상황 구분 없이 평소 성향을 반영합니다.
+                    💡 사적 상황과 업무 상황을 동시에 고려한 정밀 비교 결과입니다.
                 </p>
             </section>
 
@@ -239,11 +239,6 @@ export default function ResultContent({ results, cardRef, isCapture = false }) {
                 </div>
             </section>
 
-            {isCapture && (
-                <footer className="capture-footer">
-                    <p>모드 성향 테스트 • modetest.vercel.app</p>
-                </footer>
-            )}
         </div>
     );
 }

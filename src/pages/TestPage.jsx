@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import questions from '../data/questions.json';
 import modeQuestionIds from '../data/modeQuestions.json';
@@ -18,8 +18,6 @@ function shuffleArray(array) {
 export default function TestPage() {
     const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [answers, setAnswers] = useState({});
-    const [phase, setPhase] = useState('base'); // 'base', 'modeSelect', 'private', 'work'
     const [privateAnswers, setPrivateAnswers] = useState({});
     const [workAnswers, setWorkAnswers] = useState({});
 
@@ -36,101 +34,30 @@ export default function TestPage() {
     const isOther = testTarget.type === 'other';
     const targetName = testTarget.name || '상대방';
 
-    // Randomize question order once per test session
-    const shuffledQuestions = useMemo(() => shuffleArray(questions), []);
-    const shuffledModeQuestions = useMemo(() => {
-        return shuffleArray(questions.filter(q => modeQuestionIds.includes(q.id)));
+    // Questions for comparison (12 questions)
+    const comparisonQuestions = useMemo(() => {
+        const filtered = questions.filter((q) => modeQuestionIds.includes(q.id));
+        return shuffleArray(filtered);
     }, []);
 
-    // Get current question set based on phase
-    const getQuestions = () => {
-        if (phase === 'base') return shuffledQuestions;
-        return shuffledModeQuestions;
-    };
+    const currentQuestion = comparisonQuestions[currentIndex];
+    const progress = ((currentIndex + 1) / comparisonQuestions.length) * 100;
 
-    const currentQuestions = getQuestions();
-    const currentQuestion = currentQuestions[currentIndex];
-
-    const totalSteps = phase === 'base' ? shuffledQuestions.length : shuffledModeQuestions.length;
-    const progress = ((currentIndex + 1) / totalSteps) * 100;
-
-    const handleAnswer = (score) => {
-        const newAnswers = { ...getCurrentAnswers(), [currentQuestion.id]: score };
-        setCurrentAnswers(newAnswers);
-
-        if (currentIndex < currentQuestions.length - 1) {
-            setCurrentIndex(currentIndex + 1);
+    const handleAnswer = (mode, score) => {
+        if (mode === 'private') {
+            setPrivateAnswers((prev) => ({ ...prev, [currentQuestion.id]: score }));
         } else {
-            handlePhaseComplete(newAnswers);
+            setWorkAnswers((prev) => ({ ...prev, [currentQuestion.id]: score }));
         }
     };
 
-    const getCurrentAnswers = () => {
-        switch (phase) {
-            case 'private': return privateAnswers;
-            case 'work': return workAnswers;
-            default: return answers;
+    const handleNext = () => {
+        if (currentIndex < comparisonQuestions.length - 1) {
+            setCurrentIndex(currentIndex + 1);
+            window.scrollTo(0, 0);
+        } else {
+            handleComplete();
         }
-    };
-
-    const setCurrentAnswers = (newAnswers) => {
-        switch (phase) {
-            case 'private':
-                setPrivateAnswers(newAnswers);
-                break;
-            case 'work':
-                setWorkAnswers(newAnswers);
-                break;
-            default:
-                setAnswers(newAnswers);
-        }
-    };
-
-    const handlePhaseComplete = (finalAnswers) => {
-        if (phase === 'base') {
-            setPhase('modeSelect');
-        } else if (phase === 'private') {
-            setCurrentIndex(0);
-            setPhase('work');
-        } else if (phase === 'work') {
-            // Calculate all scores
-            const baseScores = calculateScores(answers);
-            const privateScores = calculateScores({ ...answers, ...privateAnswers });
-            const workScores = calculateScores({ ...answers, ...finalAnswers });
-
-            const results = {
-                scores: baseScores,
-                code: getCode(baseScores),
-                hasDualProfile: true,
-                privateScores,
-                privateCode: getCode(privateScores),
-                workScores,
-                workCode: getCode(workScores),
-                targetType: testTarget.type,
-                targetName: testTarget.name,
-            };
-
-            saveResults(results);
-            navigate('/result');
-        }
-    };
-
-    const handleSkipMode = () => {
-        const scores = calculateScores(answers);
-        const results = {
-            scores,
-            code: getCode(scores),
-            hasDualProfile: false,
-            targetType: testTarget.type,
-            targetName: testTarget.name,
-        };
-        saveResults(results);
-        navigate('/result');
-    };
-
-    const handleStartMode = () => {
-        setCurrentIndex(0);
-        setPhase('private');
     };
 
     const handleBack = () => {
@@ -139,35 +66,32 @@ export default function TestPage() {
         }
     };
 
-    // Mode selection screen
-    if (phase === 'modeSelect') {
-        return (
-            <div className="test-page">
-                <div className="mode-select">
-                    <div className="mode-icon">🎭</div>
-                    <h2>기본 테스트 완료!</h2>
-                    <p>
-                        <strong>사적 모드</strong>와 <strong>업무 모드</strong>를
-                        <br />비교해볼까요?
-                    </p>
-                    <p className="mode-desc">
-                        같은 질문 12개를 각 상황별로 다시 답해주시면
-                        <br />두 모드의 차이를 분석해 드려요.
-                    </p>
+    const handleComplete = () => {
+        const privateScores = calculateScores(privateAnswers);
+        const workScores = calculateScores(workAnswers);
 
-                    <div className="mode-buttons">
-                        <button className="btn-primary" onClick={handleStartMode}>
-                            모드 비교 해볼래요! (2분)
-                            <span className="btn-arrow">→</span>
-                        </button>
-                        <button className="btn-secondary" onClick={handleSkipMode}>
-                            기본 결과만 볼게요
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+        // For comparison-first flow, 'scores' (the base) is just the workScores or privateScores
+        // But to maintain compatibility with ResultContent, we'll provide both.
+        // We can also compute a 'base' score as an average if needed, but the UI focuses on the two modes now.
+        const results = {
+            scores: workScores, // default base to work scores for compatibility
+            code: getCode(workScores),
+            hasDualProfile: true,
+            privateScores,
+            privateCode: getCode(privateScores),
+            workScores,
+            workCode: getCode(workScores),
+            targetType: testTarget.type,
+            targetName: testTarget.name,
+        };
+
+        saveResults(results);
+        navigate('/result');
+    };
+
+    const isCurrentQuestionAnswered =
+        privateAnswers[currentQuestion?.id] !== undefined &&
+        workAnswers[currentQuestion?.id] !== undefined;
 
     return (
         <div className="test-page">
@@ -178,9 +102,7 @@ export default function TestPage() {
                 </button>
                 <div className="phase-badge">
                     {isOther && <span className="target-tag">👤 {targetName}</span>}
-                    {phase === 'base' && (isOther ? '성향 테스트' : '기본 테스트')}
-                    {phase === 'private' && '🏠 사적 모드'}
-                    {phase === 'work' && '💼 업무 모드'}
+                    🎭 모드 비교 테스트
                 </div>
             </div>
 
@@ -189,31 +111,51 @@ export default function TestPage() {
                 <div className="progress-bar">
                     <div className="progress-fill" style={{ width: `${progress}%` }}></div>
                 </div>
-                <span className="progress-text">{currentIndex + 1} / {totalSteps}</span>
+                <span className="progress-text">
+                    {currentIndex + 1} / {comparisonQuestions.length}
+                </span>
             </div>
 
             {/* Question */}
             <div className="question-container">
-                {(phase === 'private' || phase === 'work') && (
-                    <div className={`mode-context ${phase === 'private' ? 'private' : ''}`}>
-                        {phase === 'private'
-                            ? '친구, 가족, 연인과 함께할 때를 떠올려 주세요'
-                            : '회사, 업무 상황을 떠올려 주세요'}
-                    </div>
-                )}
-
                 <p className="question-text">{currentQuestion?.text}</p>
 
-                <div className="likert-scale">
-                    {[1, 2, 3, 4, 5, 6, 7].map((score) => (
-                        <button
-                            key={score}
-                            className={`likert-btn ${getCurrentAnswers()[currentQuestion?.id] === score ? 'selected' : ''}`}
-                            onClick={() => handleAnswer(score)}
-                        >
-                            <span className="likert-value">{score}</span>
-                        </button>
-                    ))}
+                {/* Private Mode Selection */}
+                <div className="mode-input-section private">
+                    <div className="mode-context private">
+                        🏠 <strong>사적 모드</strong>의 나는?
+                        <span className="mode-sub">친구, 가족과 함께할 때</span>
+                    </div>
+                    <div className="likert-scale">
+                        {[1, 2, 3, 4, 5, 6, 7].map((score) => (
+                            <button
+                                key={score}
+                                className={`likert-btn ${privateAnswers[currentQuestion.id] === score ? 'selected' : ''}`}
+                                onClick={() => handleAnswer('private', score)}
+                            >
+                                <span className="likert-value">{score}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Work Mode Selection */}
+                <div className="mode-input-section work">
+                    <div className="mode-context work">
+                        💼 <strong>업무 모드</strong>의 나는?
+                        <span className="mode-sub">회사, 업무 상황일 때</span>
+                    </div>
+                    <div className="likert-scale">
+                        {[1, 2, 3, 4, 5, 6, 7].map((score) => (
+                            <button
+                                key={score}
+                                className={`likert-btn ${workAnswers[currentQuestion.id] === score ? 'selected' : ''}`}
+                                onClick={() => handleAnswer('work', score)}
+                            >
+                                <span className="likert-value">{score}</span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="likert-labels">
@@ -223,11 +165,22 @@ export default function TestPage() {
             </div>
 
             {/* Navigation */}
-            {currentIndex > 0 && (
-                <button className="nav-back" onClick={handleBack}>
-                    ← 이전 질문
+            <div className="test-nav">
+                {currentIndex > 0 ? (
+                    <button className="btn-nav-outline" onClick={handleBack}>
+                        이전
+                    </button>
+                ) : (
+                    <div></div>
+                )}
+                <button
+                    className="btn-nav-primary"
+                    onClick={handleNext}
+                    disabled={!isCurrentQuestionAnswered}
+                >
+                    {currentIndex < comparisonQuestions.length - 1 ? '다음 질문' : '결과 보기'}
                 </button>
-            )}
+            </div>
         </div>
     );
 }
