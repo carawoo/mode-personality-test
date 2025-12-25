@@ -1,6 +1,7 @@
 .share-page {
     min-height: 100vh;
     padding: 1.5rem;
+    background: var(--color-bg);
 }
 
 .share-page.loading {
@@ -23,6 +24,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
+    color: var(--color-text);
 }
 
 .share-desc {
@@ -30,34 +32,64 @@
     margin-bottom: 2rem;
 }
 
-.canvas-wrapper {
+.preview-wrapper {
     background: var(--color-surface);
     border-radius: 24px;
     padding: 1rem;
     margin-bottom: 2rem;
-    overflow: hidden;
     border: 1px solid var(--color-border);
+    max-height: 400px;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-.canvas-wrapper canvas {
+.preview-wrapper canvas,
+.preview-wrapper img {
     width: 100%;
     height: auto;
-    border-radius: 16px;
+    border-radius: 12px;
     display: block;
 }
 
 .share-buttons {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
+}
+
+.export-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Hidden container for html2canvas capture */
+.capture-area-container {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 375px;
+    /* Mobile optimized width */
+    background: var(--color-bg);
+}
+
+.capture-area-container .result-content {
+    margin: 0;
+    padding: 2rem 1rem;
+    background: #0f172a;
+    /* Force dark background for sharing */
+}
+
+.loader-small {
+    padding: 3rem;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
 }
 
 @media (min-width: 640px) {
     .share-buttons {
-        flex-direction: row;
-    }
-
-    .share-buttons button {
-        flex: 1;
+        max-width: 400px;
+        margin: 0 auto;
     }
 }

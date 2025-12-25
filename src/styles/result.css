@@ -706,3 +706,21 @@
 .consistency-tips li::before {
     content: "💡 ";
 }
+/* Capture Footer for Image/PDF Exports */
+.capture-footer {
+    margin-top: 3rem;
+    padding: 2rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.capture-footer p {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.05em;
+    font-weight: 500;
+}
+
+.capture-mode {
+    background: #0f172a !important;
+}
