@@ -126,26 +126,81 @@ export default function ResultPage() {
                 {/* Dual Profile */}
                 {hasDualProfile && (
                     <section className="result-section dual-section">
-                        <h2>🎭 모드별 프로필</h2>
+                        <div className="section-header">
+                            <h2>🎭 모드별 상세 분석</h2>
+                            <span className="section-badge-inline">사적 나 vs 업무 나</span>
+                        </div>
+
                         <p className="section-note private">
-                            💡 사적 모드는 친구, 가족, 연인과 함께할 때를, 업무 모드는 회의/보고할 때를 상상하며 답한 결과입니다.
+                            💡 사적 모드는 친구, 가족, 연인과 함께할 때를, 업무 모드는 회사/보고 등 일할 때를 상상하며 답한 결과입니다.
                         </p>
-                        <div className="dual-cards">
-                            <div className="dual-card private">
-                                <span className="dual-label">🏠 사적 모드</span>
-                                <span className="dual-code">{privateCode}</span>
-                                <span className="dual-desc">{getCodeDescription(privateCode)}</span>
+
+                        <div className="dual-analysis">
+                            {/* Private Mode Column */}
+                            <div className="analysis-col private">
+                                <div className="col-header">
+                                    <span className="mode-icon">🏠</span>
+                                    <h3>사적 모드</h3>
+                                    <span className="mode-meaning">"편안한 관계에서의 나"</span>
+                                </div>
+                                <div className="analysis-card">
+                                    <div className="card-top">
+                                        <span className="analysis-code">{privateCode}</span>
+                                        <p className="analysis-title">{copyBank.typeProfiles[privateCode]?.title}</p>
+                                    </div>
+                                    <p className="analysis-desc">{copyBank.typeProfiles[privateCode]?.description}</p>
+                                    <div className="analysis-traits">
+                                        <div className="trait-item">
+                                            <strong>💪 강점:</strong> {copyBank.typeProfiles[privateCode]?.strengths}
+                                        </div>
+                                        <div className="trait-item">
+                                            <strong>⚡ 주의:</strong> {copyBank.typeProfiles[privateCode]?.challenges}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="dual-card work">
-                                <span className="dual-label">💼 업무 모드</span>
-                                <span className="dual-code">{workCode}</span>
-                                <span className="dual-desc">{getCodeDescription(workCode)}</span>
+
+                            {/* Work Mode Column */}
+                            <div className="analysis-col work">
+                                <div className="col-header">
+                                    <span className="mode-icon">💼</span>
+                                    <h3>업무 모드</h3>
+                                    <span className="mode-meaning">"생산적인 환경에서의 나"</span>
+                                </div>
+                                <div className="analysis-card">
+                                    <div className="card-top">
+                                        <span className="analysis-code">{workCode}</span>
+                                        <p className="analysis-title">{copyBank.typeProfiles[workCode]?.title}</p>
+                                    </div>
+                                    <p className="analysis-desc">{copyBank.typeProfiles[workCode]?.description}</p>
+                                    <div className="analysis-traits">
+                                        <div className="trait-item">
+                                            <strong>💪 강점:</strong> {copyBank.typeProfiles[workCode]?.strengths}
+                                        </div>
+                                        <div className="trait-item">
+                                            <strong>⚡ 주의:</strong> {copyBank.typeProfiles[workCode]?.challenges}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        {privateCode !== workCode && (
-                            <p className="mode-insight">
-                                ✨ {isOther ? `${displayName}님은` : '당신은'} 상황에 따라 다른 모습을 보여주는 타입이에요!
-                            </p>
+
+                        {privateCode !== workCode ? (
+                            <div className="mode-insight special">
+                                <span className="insight-icon">✨</span>
+                                <p>
+                                    {isOther ? `${displayName}님은` : '당신은'} <strong>상황에 따라 페르소나를 전환하는 타입</strong>이에요!
+                                    <br />업무와 사생활에서의 에너지 사용 방식이 달라 효율적인 조절 능력을 가지고 있습니다.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="mode-insight">
+                                <span className="insight-icon">🎯</span>
+                                <p>
+                                    {isOther ? `${displayName}님은` : '당신은'} <strong>어떤 상황에서도 일관된 모습을 유지하는 타입</strong>이에요!
+                                    <br />내면의 가치와 행동 양식이 견고하여 어디서나 신뢰받는 일관성을 보여줍니다.
+                                </p>
+                            </div>
                         )}
                     </section>
                 )}

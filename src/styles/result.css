@@ -165,15 +165,163 @@
     color: #16a34a;
 }
 
+/* Dual Analysis Styles */
+.dual-analysis {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .dual-analysis {
+        flex-direction: row;
+    }
+
+    .analysis-col {
+        flex: 1;
+    }
+}
+
+.analysis-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.col-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    text-align: center;
+}
+
+.col-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-text);
+}
+
+.mode-icon {
+    font-size: 1.5rem;
+}
+
+.mode-meaning {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.analysis-card {
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    height: 100%;
+}
+
+.private .analysis-card {
+    border-top: 4px solid #ec4899;
+}
+
+.work .analysis-card {
+    border-top: 4px solid #3b82f6;
+}
+
+.card-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.analysis-code {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-primary);
+}
+
+.analysis-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.analysis-desc {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+
+.analysis-traits {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--color-border);
+}
+
+.trait-item {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+    text-align: left;
+}
+
+.trait-item strong {
+    color: var(--color-text);
+}
+
+/* Updated Mode Insight */
 .mode-insight {
-    margin-top: 1rem;
-    padding: 0.875rem 1rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
     background: rgba(34, 197, 94, 0.1);
     border: 1px solid rgba(34, 197, 94, 0.2);
-    border-radius: 12px;
+    border-radius: 16px;
     font-size: 0.875rem;
     color: var(--color-text);
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+}
+
+.mode-insight.special {
+    background: rgba(147, 51, 234, 0.1);
+    border-color: rgba(147, 51, 234, 0.3);
+}
+
+.insight-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.mode-insight p {
+    margin: 0;
+}
+
+.section-badge-inline {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    background: var(--color-border);
+    border-radius: 100px;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.section-header h2 {
+    margin: 0;
 }
 
 /* Description Section */
