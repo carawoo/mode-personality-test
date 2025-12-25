@@ -97,6 +97,10 @@ export default function ResultPage() {
                             ))}
                         </div>
                     )}
+
+                    <p className="section-note">
+                        💡 기본 테스트 24문항의 결과입니다. 상황 구분 없이 평소 성향을 반영합니다.
+                    </p>
                 </section>
 
                 {/* Type Description */}
@@ -123,6 +127,9 @@ export default function ResultPage() {
                 {hasDualProfile && (
                     <section className="result-section dual-section">
                         <h2>🎭 모드별 프로필</h2>
+                        <p className="section-note">
+                            💡 사적 모드는 혼자/친한 친구와 있을 때, 업무 모드는 회의/보고할 때를 상상하며 답한 결과입니다.
+                        </p>
                         <div className="dual-cards">
                             <div className="dual-card private">
                                 <span className="dual-label">🏠 사적 모드</span>
@@ -135,6 +142,11 @@ export default function ResultPage() {
                                 <span className="dual-desc">{getCodeDescription(workCode)}</span>
                             </div>
                         </div>
+                        {privateCode !== workCode && (
+                            <p className="mode-insight">
+                                ✨ {isOther ? `${displayName}님은` : '당신은'} 상황에 따라 다른 모습을 보여주는 타입이에요!
+                            </p>
+                        )}
                     </section>
                 )}
 
