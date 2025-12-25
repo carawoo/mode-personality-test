@@ -195,7 +195,7 @@ export default function TestPage() {
             {/* Question */}
             <div className="question-container">
                 {(phase === 'private' || phase === 'work') && (
-                    <div className="mode-context">
+                    <div className={`mode-context ${phase === 'private' ? 'private' : ''}`}>
                         {phase === 'private'
                             ? '친구, 가족, 연인과 함께할 때를 떠올려 주세요'
                             : '회사, 업무 상황을 떠올려 주세요'}
