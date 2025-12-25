@@ -220,9 +220,9 @@ export default function ResultContent({ results, cardRef, isCapture = false }) {
             <section className="result-section action-section">
                 <h2>🚀 당신을 위한 가이드</h2>
                 <div className="action-cards">
-                    {actionCards.map((card, i) => (
+                    {Object.values(actionCards).map((card, i) => (
                         <div key={i} className="action-card">
-                            <span className="action-icon">{card.icon}</span>
+                            <span className="action-icon">{card.icon || '🚀'}</span>
                             <div className="action-content">
                                 <h4>{card.title}</h4>
                                 <p>{card.text}</p>
