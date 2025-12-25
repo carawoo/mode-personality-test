@@ -132,6 +132,8 @@ export function getModeDiffInterpretation(diffs) {
         return {
             axis,
             diff,
+            absDiff,
+            direction,
             level,
             text,
             axisName: copyBank.axisNames[axis].name,
