@@ -166,41 +166,51 @@ export function decodeResults(encoded) {
 
     let decoded;
     try {
-      decoded = decodeURIComponent(escape(atob(b64)));
+      // Handle potential Unicode in b64
+      const binary = atob(b64);
+      try {
+        decoded = decodeURIComponent(escape(binary));
+      } catch (e) {
+        decoded = binary;
+      }
     } catch (e) {
-      // Fallback for non-URI encoded strings
-      decoded = atob(b64);
+      return null;
     }
 
-    // Some legacy strings might still be URI encoded after atob
-    if (decoded.includes('%')) {
+    // Recursively decode URI components if still present (v1 legacy style)
+    let safetyCounter = 0;
+    while (decoded.includes('%') && safetyCounter < 3) {
       try {
-        decoded = decodeURIComponent(decoded);
+        const next = decodeURIComponent(decoded);
+        if (next === decoded) break;
+        decoded = next;
+        safetyCounter++;
       } catch (e) {
-        // ignore
+        break;
       }
     }
 
     // Check v3
     if (decoded.startsWith('v3|')) {
-      const [, sStr, wsStr, psStr, type, name] = decoded.split('|');
+      const parts = decoded.split('|');
+      const [, sStr, wsStr, psStr, type, name] = parts;
 
       const s = sStr.split('.').map(Number);
       const scores = { EI: s[0], SN: s[1], TF: s[2], JP: s[3] };
 
       let workScores = null;
-      if (wsStr) {
+      if (wsStr && wsStr.length > 0) {
         const ws = wsStr.split('.').map(Number);
         workScores = { EI: ws[0], SN: ws[1], TF: ws[2], JP: ws[3] };
       }
 
       let privateScores = null;
-      if (psStr) {
+      if (psStr && psStr.length > 0) {
         const ps = psStr.split('.').map(Number);
         privateScores = { EI: ps[0], SN: ps[1], TF: ps[2], JP: ps[3] };
       }
 
-      const res = {
+      return {
         scores,
         code: getCode(scores),
         hasDualProfile: !!workScores,
@@ -211,7 +221,6 @@ export function decodeResults(encoded) {
         targetType: type === 'o' ? 'other' : 'self',
         targetName: name ? decodeURIComponent(name) : null
       };
-      return res;
     }
 
     // Check v2
@@ -239,10 +248,22 @@ export function decodeResults(encoded) {
     }
 
     // v1 Fallback (JSON)
-    return JSON.parse(decoded);
+    const data = JSON.parse(decoded);
+    // Ensure scores exists or re-calculate if somehow missing
+    if (data && !data.scores && data.workScores && data.privateScores) {
+      // Recover scores from average of work/private if missing
+      data.scores = {
+        EI: Math.round((data.workScores.EI + data.privateScores.EI) / 2),
+        SN: Math.round((data.workScores.SN + data.privateScores.SN) / 2),
+        TF: Math.round((data.workScores.TF + data.privateScores.TF) / 2),
+        JP: Math.round((data.workScores.JP + data.privateScores.JP) / 2),
+      };
+      data.code = getCode(data.scores);
+    }
+    return data;
   } catch (e) {
     try {
-      // Absolute B64 JSON fallback
+      // Radical fallback
       return JSON.parse(atob(encoded));
     } catch (ee) {
       return null;
