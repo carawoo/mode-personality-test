@@ -129,24 +129,64 @@ export function getDiffLevel(absDiff) {
 }
 
 /**
- * Encode scores to base64 for URL sharing
- * @param {Object} data - { scores, code, workScores?, workCode?, privateScores?, privateCode? }
+ * Encode scores to a compact string for URL sharing
+ * @param {Object} data - { scores, workScores?, privateScores?, targetType, targetName }
  * @returns {string}
  */
 export function encodeResults(data) {
-  return btoa(encodeURIComponent(JSON.stringify(data)));
+  const { scores, workScores, privateScores, targetType, targetName } = data;
+
+  const s = [scores.EI, scores.SN, scores.TF, scores.JP].join(',');
+  const ws = workScores ? [workScores.EI, workScores.SN, workScores.TF, workScores.JP].join(',') : '';
+  const ps = privateScores ? [privateScores.EI, privateScores.SN, privateScores.TF, privateScores.JP].join(',') : '';
+
+  const compact = `v2|${s}|${ws}|${ps}|${targetType || 'self'}|${targetName || ''}`;
+
+  // Use btoa with unicode support trick
+  return btoa(unescape(encodeURIComponent(compact)));
 }
 
 /**
- * Decode scores from base64 URL parameter
+ * Decode results from compact string or old JSON format
  * @param {string} encoded
  * @returns {Object|null}
  */
 export function decodeResults(encoded) {
   try {
-    return JSON.parse(decodeURIComponent(atob(encoded)));
+    const decoded = decodeURIComponent(escape(atob(encoded)));
+
+    if (decoded.startsWith('v2|')) {
+      const parts = decoded.split('|');
+      const s = parts[1].split(',').map(Number);
+      const ws = parts[2] ? parts[2].split(',').map(Number) : null;
+      const ps = parts[3] ? parts[3].split(',').map(Number) : null;
+
+      const scores = { EI: s[0], SN: s[1], TF: s[2], JP: s[3] };
+      const workScores = ws && ws.length === 4 ? { EI: ws[0], SN: ws[1], TF: ws[2], JP: ws[3] } : null;
+      const privateScores = ps && ps.length === 4 ? { EI: ps[0], SN: ps[1], TF: ps[2], JP: ps[3] } : null;
+
+      return {
+        scores,
+        code: getCode(scores),
+        hasDualProfile: !!workScores,
+        workScores,
+        workCode: workScores ? getCode(workScores) : null,
+        privateScores,
+        privateCode: privateScores ? getCode(privateScores) : null,
+        targetType: parts[4],
+        targetName: parts[5] || null
+      };
+    }
+
+    // Fallback to old dynamic JSON format
+    return JSON.parse(decoded);
   } catch (e) {
-    return null;
+    try {
+      // Absolute fallback for non-URI encoded b64
+      return JSON.parse(atob(encoded));
+    } catch (ee) {
+      return null;
+    }
   }
 }
 
