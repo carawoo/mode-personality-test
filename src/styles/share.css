@@ -64,47 +64,100 @@
     margin-bottom: 0.75rem;
 }
 
-/* Container for html2canvas capture (hidden but rendered properly) */
+/* Container for html2canvas capture (hidden off-screen but rendered) */
 .capture-area-container {
-    position: fixed;
+    position: absolute;
     top: 0;
-    left: 100%;
-    /* Move out of viewport instead of extreme left */
+    left: -9999px;
+    /* Traditional off-screen positioning */
     width: 375px;
-    visibility: hidden;
-    pointer-events: none;
     background: #0f172a;
+    z-index: -1;
 }
 
 .capture-area-container .result-content.capture-mode {
-    margin: 0;
-    padding: 2.5rem 1.25rem;
+    margin: 0 !important;
+    padding: 2.5rem 1.25rem !important;
     background: #0f172a !important;
-    width: 375px;
-    color: #ffffff;
+    /* Solid dark navy */
+    width: 375px !important;
+    color: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2rem !important;
 }
 
-/* Ensure all sub-elements have proper visibility in capture */
+/* Force visibility and colors for all sections in capture */
 .capture-mode .result-section {
     background: rgba(255, 255, 255, 0.05) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 0 !important;
+    /* Gap handled by parent */
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-.capture-mode .section-badge {
+.capture-mode .section-badge,
+.capture-mode .section-badge-inline {
     background: rgba(147, 51, 234, 0.2) !important;
+    color: #c084fc !important;
+    display: inline-block !important;
+    padding: 0.375rem 0.75rem !important;
+    border-radius: 100px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 1rem !important;
 }
 
-.capture-mode h1,
+.capture-mode h1.main-code {
+    font-size: 3.5rem !important;
+    color: #ffffff !important;
+    line-height: 1 !important;
+    margin: 0.5rem 0 !important;
+}
+
+.capture-mode .type-title {
+    color: #a855f7 !important;
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+}
+
 .capture-mode h2,
 .capture-mode h3,
 .capture-mode h4 {
     color: #ffffff !important;
+    margin-bottom: 1rem !important;
 }
 
 .capture-mode p,
-.capture-mode span {
-    color: rgba(255, 255, 255, 0.8) !important;
+.capture-mode span,
+.capture-mode li {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.capture-mode .keyword-tag {
+    background: rgba(147, 51, 234, 0.1) !important;
+    border: 1px solid rgba(147, 51, 234, 0.2) !important;
+    color: #c084fc !important;
+}
+
+.capture-mode .axis-bar {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.capture-mode .axis-marker {
+    background: #a855f7 !important;
+}
+
+.capture-mode .capture-footer {
+    text-align: center !important;
+    padding: 2rem 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 0.75rem !important;
 }
 
 .loader-small {

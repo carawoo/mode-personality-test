@@ -23,29 +23,30 @@ export default function SharePage() {
         }
     }, [navigate]);
 
-    // Generate a preview if possible (optional, but helps user see what they are saving)
+    // Generate a preview when results are loaded
     useEffect(() => {
         if (results) {
-            // Give a tiny bit of time for the hidden content to render
             const timer = setTimeout(() => {
                 generatePreview();
-            }, 500);
+            }, 800); // Wait a bit more for background rendering
             return () => clearTimeout(timer);
         }
     }, [results]);
 
     const generatePreview = async () => {
         if (!captureRef.current) return;
+
         try {
-            const canvas = await html2canvas(captureRef.current, {
+            const element = captureRef.current;
+            const canvas = await html2canvas(element, {
                 useCORS: true,
                 scale: 2,
                 backgroundColor: '#0f172a',
                 logging: false,
                 width: 375,
-                height: captureRef.current.scrollHeight,
+                height: element.scrollHeight,
                 windowWidth: 375,
-                windowHeight: captureRef.current.scrollHeight,
+                windowHeight: element.scrollHeight,
             });
             setPreviewUrl(canvas.toDataURL('image/png'));
         } catch (err) {
@@ -58,39 +59,44 @@ export default function SharePage() {
         setIsGenerating(true);
 
         try {
-            const canvas = await html2canvas(captureRef.current, {
+            // Re-calculate height in case of updates
+            const element = captureRef.current;
+            const canvas = await html2canvas(element, {
                 useCORS: true,
-                scale: 3, // Higher quality for saving
+                scale: 3,
                 backgroundColor: '#0f172a',
                 width: 375,
-                height: captureRef.current.scrollHeight,
+                height: element.scrollHeight,
                 windowWidth: 375,
-                windowHeight: captureRef.current.scrollHeight,
+                windowHeight: element.scrollHeight,
             });
 
             const fileName = `모드성향테스트_${results.code}.png`;
-            const image = canvas.toDataURL('image/png', 1.0);
 
-            // Web Share API for mobile save to photos
-            if (navigator.share && navigator.canShare) {
-                const blob = await (await fetch(image)).blob();
-                const file = new File([blob], fileName, { type: 'image/png' });
-                if (navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: '나의 모드 성향 결과',
-                    });
-                    setIsGenerating(false);
-                    return;
-                }
+            if (navigator.share && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], fileName, { type: 'image/png' });
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: '모드 성향 테스트 결과',
+                        });
+                    } catch (err) {
+                        const link = document.createElement('a');
+                        link.download = fileName;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    }
+                }, 'image/png');
+            } else {
+                const link = document.createElement('a');
+                link.download = fileName;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
             }
-
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = fileName;
-            link.click();
         } catch (err) {
-            console.error('Save image failed:', err);
+            console.error('Failed to save image:', err);
+            alert('이미지 저장에 실패했습니다.');
         } finally {
             setIsGenerating(false);
         }
@@ -101,27 +107,29 @@ export default function SharePage() {
         setIsGenerating(true);
 
         try {
-            const canvas = await html2canvas(captureRef.current, {
+            const element = captureRef.current;
+            const canvas = await html2canvas(element, {
                 useCORS: true,
                 scale: 2,
                 backgroundColor: '#0f172a',
                 width: 375,
-                height: captureRef.current.scrollHeight,
+                height: element.scrollHeight,
                 windowWidth: 375,
-                windowHeight: captureRef.current.scrollHeight,
+                windowHeight: element.scrollHeight,
             });
 
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'px',
-                format: [canvas.width / 2, canvas.height / 2], // Match half-scale for reasonable size
+                format: [375, element.scrollHeight], // Use actual pixel height
             });
 
-            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+            pdf.addImage(imgData, 'PNG', 0, 0, 375, element.scrollHeight);
             pdf.save(`모드성향테스트_${results.code}.pdf`);
         } catch (err) {
             console.error('Save PDF failed:', err);
+            alert('PDF 저장에 실패했습니다.');
         } finally {
             setIsGenerating(false);
         }
@@ -199,7 +207,7 @@ export default function SharePage() {
                 </div>
             </div>
 
-            {/* Hidden capture area */}
+            {/* Hidden capture area - rendered off-screen (left: -9999px) */}
             <div className="capture-area-container" ref={captureRef}>
                 <ResultContent results={results} isCapture={true} />
             </div>
