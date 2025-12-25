@@ -1,0 +1,229 @@
+.test-page {
+    min-height: 100vh;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.test-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.2s;
+}
+
+.back-btn:hover {
+    color: var(--color-text);
+}
+
+.phase-badge {
+    padding: 0.5rem 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 100px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--color-surface);
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 100px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    min-width: 60px;
+    text-align: right;
+}
+
+.question-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mode-context {
+    padding: 0.75rem 1.5rem;
+    background: rgba(147, 51, 234, 0.1);
+    border: 1px solid rgba(147, 51, 234, 0.2);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    color: var(--color-primary);
+    margin-bottom: 2rem;
+}
+
+.question-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--color-text);
+    margin-bottom: 3rem;
+}
+
+.likert-scale {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.likert-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    border: 2px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.likert-btn:hover {
+    border-color: var(--color-primary);
+    background: rgba(147, 51, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.likert-btn.selected {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+.likert-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 360px;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.nav-back {
+    margin-top: 2rem;
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: 0.75rem;
+    align-self: center;
+}
+
+.nav-back:hover {
+    color: var(--color-text);
+}
+
+/* Mode Select */
+.mode-select {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.mode-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.mode-select h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+}
+
+.mode-select p {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.mode-select p strong {
+    color: var(--color-primary);
+}
+
+.mode-desc {
+    font-size: 0.875rem !important;
+    color: var(--color-text-muted) !important;
+    margin-bottom: 2rem !important;
+}
+
+.mode-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .question-text {
+        font-size: 1.5rem;
+    }
+
+    .likert-btn {
+        width: 56px;
+        height: 56px;
+        font-size: 1.125rem;
+    }
+}

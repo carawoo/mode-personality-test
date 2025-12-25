@@ -1,0 +1,29 @@
+[
+  {"id":"EI_1","axis":"EI","reverse":false,"text":"사람들과 상호작용하면 에너지가 오른다."},
+  {"id":"EI_2","axis":"EI","reverse":false,"text":"말을 하면서 생각이 정리되는 편이다."},
+  {"id":"EI_3","axis":"EI","reverse":true,"text":"혼자 있는 시간이 길수록 편안하다."},
+  {"id":"EI_4","axis":"EI","reverse":true,"text":"즉흥적 잡담/네트워킹은 피로하다."},
+  {"id":"EI_5","axis":"EI","reverse":false,"text":"회의/모임에서 먼저 분위기를 여는 편이다."},
+  {"id":"EI_6","axis":"EI","reverse":true,"text":"내 얘기는 충분히 준비된 뒤에 꺼낸다."},
+
+  {"id":"SN_1","axis":"SN","reverse":false,"text":"구체적 예시·수치가 있어야 빠르게 이해된다."},
+  {"id":"SN_2","axis":"SN","reverse":true,"text":"큰 그림(의도/방향)을 먼저 알아야 이해된다."},
+  {"id":"SN_3","axis":"SN","reverse":false,"text":"검증된 방식이 주는 안정감이 크다."},
+  {"id":"SN_4","axis":"SN","reverse":true,"text":"새로운 가능성을 상상하는 게 더 즐겁다."},
+  {"id":"SN_5","axis":"SN","reverse":false,"text":"설명할 때 디테일/절차를 자연스럽게 챙긴다."},
+  {"id":"SN_6","axis":"SN","reverse":true,"text":"직감적으로 \"이게 맞다\"는 판단이 자주 선다."},
+
+  {"id":"TF_1","axis":"TF","reverse":false,"text":"결정은 감정보다 기준·원칙이 우선이다."},
+  {"id":"TF_2","axis":"TF","reverse":true,"text":"결론이 맞아도 상대가 상처 받으면 방식을 바꾼다."},
+  {"id":"TF_3","axis":"TF","reverse":false,"text":"피드백은 핵심부터 직설적으로 말하는 편이다."},
+  {"id":"TF_4","axis":"TF","reverse":true,"text":"같은 말도 관계를 고려해 순화해서 말한다."},
+  {"id":"TF_5","axis":"TF","reverse":false,"text":"갈등이 생기면 \"무엇이 맞는가\"부터 정리한다."},
+  {"id":"TF_6","axis":"TF","reverse":true,"text":"갈등이 생기면 \"서로 납득되는 감정\"부터 맞춘다."},
+
+  {"id":"JP_1","axis":"JP","reverse":false,"text":"일정/규칙이 있어야 마음이 편하다."},
+  {"id":"JP_2","axis":"JP","reverse":true,"text":"계획이 깨져도 즉흥 대응이 오히려 재밌다."},
+  {"id":"JP_3","axis":"JP","reverse":false,"text":"마감은 되도록 앞당겨 끝내려 한다."},
+  {"id":"JP_4","axis":"JP","reverse":true,"text":"선택지는 열어두고 막판에 결정하는 편이다."},
+  {"id":"JP_5","axis":"JP","reverse":false,"text":"진행 중 정의/정리/문서화가 중요하다."},
+  {"id":"JP_6","axis":"JP","reverse":true,"text":"일단 해보고 필요하면 나중에 정리해도 된다."}
+]
