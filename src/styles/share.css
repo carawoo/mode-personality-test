@@ -64,21 +64,47 @@
     margin-bottom: 0.75rem;
 }
 
-/* Hidden container for html2canvas capture */
+/* Container for html2canvas capture (hidden but rendered properly) */
 .capture-area-container {
-    position: absolute;
-    left: -9999px;
+    position: fixed;
     top: 0;
+    left: 100%;
+    /* Move out of viewport instead of extreme left */
     width: 375px;
-    /* Mobile optimized width */
-    background: var(--color-bg);
+    visibility: hidden;
+    pointer-events: none;
+    background: #0f172a;
 }
 
-.capture-area-container .result-content {
+.capture-area-container .result-content.capture-mode {
     margin: 0;
-    padding: 2rem 1rem;
-    background: #0f172a;
-    /* Force dark background for sharing */
+    padding: 2.5rem 1.25rem;
+    background: #0f172a !important;
+    width: 375px;
+    color: #ffffff;
+}
+
+/* Ensure all sub-elements have proper visibility in capture */
+.capture-mode .result-section {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    margin-bottom: 2rem;
+}
+
+.capture-mode .section-badge {
+    background: rgba(147, 51, 234, 0.2) !important;
+}
+
+.capture-mode h1,
+.capture-mode h2,
+.capture-mode h3,
+.capture-mode h4 {
+    color: #ffffff !important;
+}
+
+.capture-mode p,
+.capture-mode span {
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .loader-small {

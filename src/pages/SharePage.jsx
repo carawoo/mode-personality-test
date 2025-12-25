@@ -42,6 +42,10 @@ export default function SharePage() {
                 scale: 2,
                 backgroundColor: '#0f172a',
                 logging: false,
+                width: 375,
+                height: captureRef.current.scrollHeight,
+                windowWidth: 375,
+                windowHeight: captureRef.current.scrollHeight,
             });
             setPreviewUrl(canvas.toDataURL('image/png'));
         } catch (err) {
@@ -58,6 +62,10 @@ export default function SharePage() {
                 useCORS: true,
                 scale: 3, // Higher quality for saving
                 backgroundColor: '#0f172a',
+                width: 375,
+                height: captureRef.current.scrollHeight,
+                windowWidth: 375,
+                windowHeight: captureRef.current.scrollHeight,
             });
 
             const fileName = `모드성향테스트_${results.code}.png`;
@@ -97,6 +105,10 @@ export default function SharePage() {
                 useCORS: true,
                 scale: 2,
                 backgroundColor: '#0f172a',
+                width: 375,
+                height: captureRef.current.scrollHeight,
+                windowWidth: 375,
+                windowHeight: captureRef.current.scrollHeight,
             });
 
             const imgData = canvas.toDataURL('image/png');
