@@ -127,7 +127,14 @@ export function pickActionCards(scores) {
 export function getModeDiffInterpretation(diffs) {
     return diffs.slice(0, 3).map(({ axis, diff, absDiff, direction }) => {
         const level = getDiffLevel(absDiff);
-        const text = copyBank.modeDiff[axis]?.[direction] || '';
+
+        // Select detailed text based on impact level
+        const impact = absDiff >= 15 ? 'high' : 'low';
+        let text = '';
+        if (direction !== 'neutral') {
+            text = copyBank.modeDiff[axis]?.[direction]?.[impact] ||
+                copyBank.modeDiff[axis]?.[direction]?.['low'] || '';
+        }
 
         return {
             axis,
