@@ -1,4 +1,4 @@
-import questions from '../data/questions.json';
+import questions from '../data/questions.json' with { type: 'json' };
 
 /**
  * Calculate axis scores from answers
@@ -129,32 +129,92 @@ export function getDiffLevel(absDiff) {
 }
 
 /**
- * Encode scores to a compact string for URL sharing
+ * Encode scores to an ultra-compact string for URL sharing (v3)
  * @param {Object} data - { scores, workScores?, privateScores?, targetType, targetName }
  * @returns {string}
  */
 export function encodeResults(data) {
   const { scores, workScores, privateScores, targetType, targetName } = data;
 
-  const s = [scores.EI, scores.SN, scores.TF, scores.JP].join(',');
-  const ws = workScores ? [workScores.EI, workScores.SN, workScores.TF, workScores.JP].join(',') : '';
-  const ps = privateScores ? [privateScores.EI, privateScores.SN, privateScores.TF, privateScores.JP].join(',') : '';
+  // v3: use dot delimiters and short identifiers to minimize B64 size
+  // order: EI,SN,TF,JP
+  const s = `${scores.EI}.${scores.SN}.${scores.TF}.${scores.JP}`;
+  const ws = workScores ? `${workScores.EI}.${workScores.SN}.${workScores.TF}.${workScores.JP}` : '';
+  const ps = privateScores ? `${privateScores.EI}.${privateScores.SN}.${privateScores.TF}.${privateScores.JP}` : '';
+  const type = targetType === 'other' ? 'o' : 's';
+  const name = targetName ? encodeURIComponent(targetName) : '';
 
-  const compact = `v2|${s}|${ws}|${ps}|${targetType || 'self'}|${targetName || ''}`;
-
-  // Use btoa with unicode support trick
-  return btoa(unescape(encodeURIComponent(compact)));
+  const compact = `v3|${s}|${ws}|${ps}|${type}|${name}`;
+  return btoa(unescape(encodeURIComponent(compact))).replace(/=/g, ''); // Remove padding for shorter URL
 }
 
 /**
- * Decode results from compact string or old JSON format
+ * Decode results from v3, v2, or v1 format
  * @param {string} encoded
  * @returns {Object|null}
  */
 export function decodeResults(encoded) {
-  try {
-    const decoded = decodeURIComponent(escape(atob(encoded)));
+  if (!encoded) return null;
 
+  try {
+    // Legacy links might be URL-encoded (containing %7B etc.)
+    const rawB64 = decodeURIComponent(encoded);
+
+    // Add back padding if needed for atob
+    let b64 = rawB64;
+    while (b64.length % 4 !== 0) b64 += '=';
+
+    let decoded;
+    try {
+      decoded = decodeURIComponent(escape(atob(b64)));
+    } catch (e) {
+      // Fallback for non-URI encoded strings
+      decoded = atob(b64);
+    }
+
+    // Some legacy strings might still be URI encoded after atob
+    if (decoded.includes('%')) {
+      try {
+        decoded = decodeURIComponent(decoded);
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    // Check v3
+    if (decoded.startsWith('v3|')) {
+      const [, sStr, wsStr, psStr, type, name] = decoded.split('|');
+
+      const s = sStr.split('.').map(Number);
+      const scores = { EI: s[0], SN: s[1], TF: s[2], JP: s[3] };
+
+      let workScores = null;
+      if (wsStr) {
+        const ws = wsStr.split('.').map(Number);
+        workScores = { EI: ws[0], SN: ws[1], TF: ws[2], JP: ws[3] };
+      }
+
+      let privateScores = null;
+      if (psStr) {
+        const ps = psStr.split('.').map(Number);
+        privateScores = { EI: ps[0], SN: ps[1], TF: ps[2], JP: ps[3] };
+      }
+
+      const res = {
+        scores,
+        code: getCode(scores),
+        hasDualProfile: !!workScores,
+        workScores,
+        workCode: workScores ? getCode(workScores) : null,
+        privateScores,
+        privateCode: privateScores ? getCode(privateScores) : null,
+        targetType: type === 'o' ? 'other' : 'self',
+        targetName: name ? decodeURIComponent(name) : null
+      };
+      return res;
+    }
+
+    // Check v2
     if (decoded.startsWith('v2|')) {
       const parts = decoded.split('|');
       const s = parts[1].split(',').map(Number);
@@ -178,11 +238,11 @@ export function decodeResults(encoded) {
       };
     }
 
-    // Fallback to old dynamic JSON format
+    // v1 Fallback (JSON)
     return JSON.parse(decoded);
   } catch (e) {
     try {
-      // Absolute fallback for non-URI encoded b64
+      // Absolute B64 JSON fallback
       return JSON.parse(atob(encoded));
     } catch (ee) {
       return null;
